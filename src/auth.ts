@@ -1,19 +1,23 @@
 import NextAuth from "next-auth";
-import type { NextAuthConfig } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { prisma } from "@/lib/prisma"; // Adjusted path
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import type { NextAuthConfig } from "next-auth";
 
-export const authOptions: NextAuthConfig = {
+export const config: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
   providers: [
-    Google,
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     Credentials({
-      name: "Credentials",
+      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+      // e.g. domain, username, password, 2FA token, etc.
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
@@ -26,7 +30,6 @@ export const authOptions: NextAuthConfig = {
         });
 
         if (!user || !user.password) {
-          // User not found or doesn't have a password (e.g., OAuth user)
           return null;
         }
 
@@ -39,50 +42,45 @@ export const authOptions: NextAuthConfig = {
           return null;
         }
 
-        // Return user object without password
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-        };
+        // Return user object, which will be used in the JWT callback
+        return { id: user.id, name: user.name, email: user.email, image: user.image };
       },
     }),
   ],
   session: {
-    strategy: "jwt", // Using JWT for session strategy
+    strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
-      // Add user id to the token
+    // authorized({ auth, request: { nextUrl } }) {
+    //   const isLoggedIn = !!auth?.user;
+    //   const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
+    //   if (isOnDashboard) {
+    //     if (isLoggedIn) return true;
+    //     return false; // Redirect unauthenticated users to login page
+    //   } else if (isLoggedIn) {
+    //     // If logged in and trying to access auth pages, redirect to dashboard
+    //     if (nextUrl.pathname.startsWith('/auth/signin')) {
+    //         return Response.redirect(new URL('/dashboard', nextUrl));
+    //     }
+    //   }
+    //   return true;
+    // },
+    jwt({ token, user }) {
       if (user) {
+        // User is available during sign-in
         token.id = user.id;
       }
       return token;
     },
-    async session({ session, token }) {
-      // Add user id to the session
-      if (session.user) {
-        session.user.id = token.id as string;
-      }
+    session({ session, token }) {
+      session.user.id = token.id as string;
       return session;
     },
   },
   pages: {
-    signIn: "/auth/signin", // Customize if you have a custom sign-in page
-    // error: '/auth/error', // Custom error page
-    // signOut: '/auth/signout',
+    signIn: "/auth/signin",
   },
-  // Secret for JWT signing and encryption
-  // The `NEXTAUTH_SECRET` environment variable will be used if provided,
-  // otherwise, Auth.js will generate one in development.
-  // It's crucial to set NEXTAUTH_SECRET in production.
-  secret: process.env.AUTH_SECRET, // or NEXTAUTH_SECRET
+  secret: process.env.AUTH_SECRET, // Ensure this is set
 };
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth(authOptions);
+export const { handlers, auth, signIn, signOut } = NextAuth(config);
