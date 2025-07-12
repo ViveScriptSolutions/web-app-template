@@ -1,0 +1,44 @@
+{
+  "Navbar": {
+    "home": "Inicio",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "dashboard": "Panel",
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión"
+  },
+  "HomePage": {
+    "welcome": "Bienvenido a",
+    "description": "{siteName} es una plantilla moderna de inicio para Next.js con Auth.js, Prisma, ShadCN UI y más.",
+    "viewOnGitHub": "Ver en GitHub",
+    "getStarted": "Comenzar",
+    "features": "Características"
+  },
+  "AboutPage": {
+    "title": "Sobre Nosotros",
+    "intro": "Esta es una plantilla de inicio diseñada para impulsar tus proyectos Next.js con todas las características esenciales.",
+    "body": "Construida con las últimas tecnologías para asegurar un código base moderno, escalable y mantenible. Nos enfocamos en la experiencia del desarrollador y el rendimiento."
+  },
+  "ContactPage": {
+    "title": "Contáctanos",
+    "intro": "¿Tienes preguntas o comentarios? Nos encantaría saber de ti.",
+    "name": "Nombre",
+    "email": "Correo Electrónico",
+    "message": "Mensaje",
+    "sendMessage": "Enviar Mensaje"
+  },
+  "DashboardPage": {
+    "title": "Panel",
+    "welcome": "¡Bienvenido a tu panel protegido, {userName}!"
+  },
+  "SignInPage": {
+    "title": "Iniciar Sesión",
+    "credentialsError": "Correo electrónico o contraseña no válidos.",
+    "genericError": "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.",
+    "emailLabel": "Dirección de correo electrónico",
+    "passwordLabel": "Contraseña",
+    "credentialsSubmit": "Iniciar Sesión con Credenciales",
+    "or": "O",
+    "googleSubmit": "Iniciar Sesión con Google"
+  }
+}
