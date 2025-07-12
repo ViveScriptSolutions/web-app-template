@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { withAuth, NextAuthRequest } from "next-auth/middleware";
 import createIntlMiddleware from "next-intl/middleware";
-import { locales, defaultLocale } from "./i18n"; // Adjusted path
+import { locales, defaultLocale } from "./src/i18n"; // Adjusted path
 
 // Create the i18n middleware
 const intlMiddleware = createIntlMiddleware({
@@ -21,7 +21,10 @@ const authMiddleware = withAuth(
     // If the user is authenticated and tries to access auth pages like signin,
     // redirect them to the dashboard or home page.
     if (token) {
-      if (pathname.startsWith("/auth/signin") || pathname.startsWith("/auth/signup")) {
+      if (
+        pathname.startsWith("/auth/signin") ||
+        pathname.startsWith("/auth/signup")
+      ) {
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
     }
@@ -47,7 +50,6 @@ const authMiddleware = withAuth(
   }
 );
 
-
 export default function middleware(req: NextRequest) {
   // First, let the i18n middleware process the request to determine/set locale
   // This is a common pattern but needs careful ordering with auth.
@@ -63,33 +65,45 @@ export default function middleware(req: NextRequest) {
   // then intlMiddleware can further process it.
 
   // Check if the route is public or requires auth
-  const publicPaths = ["/", "/about", "/contact", "/auth/signin", "/auth/signup"]; // Add other public paths
-  const isPublicPath = publicPaths.some(path => req.nextUrl.pathname === path || (path.endsWith('/') && req.nextUrl.pathname.startsWith(path)));
+  const publicPaths = [
+    "/",
+    "/about",
+    "/contact",
+    "/auth/signin",
+    "/auth/signup",
+  ]; // Add other public paths
+  const isPublicPath = publicPaths.some(
+    (path) =>
+      req.nextUrl.pathname === path ||
+      (path.endsWith("/") && req.nextUrl.pathname.startsWith(path))
+  );
 
-  const isApiAuthRoute = req.nextUrl.pathname.startsWith('/api/auth');
+  const isApiAuthRoute = req.nextUrl.pathname.startsWith("/api/auth");
 
   if (isApiAuthRoute) {
     return NextResponse.next(); // Auth API routes should not be processed by this custom middleware stack usually
   }
 
   if (!isPublicPath && !req.nextUrl.pathname.startsWith("/dashboard")) {
-     // If it's not a defined public path and not /dashboard (which auth handles specifically)
-     // then it's likely a static asset or similar, let i18n handle it directly.
-     // This logic might need refinement based on exact routing needs.
-     return intlMiddleware(req);
+    // If it's not a defined public path and not /dashboard (which auth handles specifically)
+    // then it's likely a static asset or similar, let i18n handle it directly.
+    // This logic might need refinement based on exact routing needs.
+    return intlMiddleware(req);
   }
-
 
   // If it's a path that authMiddleware's matcher would cover (dashboard, auth pages)
   // or a public page where auth logic (like redirecting logged-in user from /signin) is desired.
-  if (config.matcher.some(pattern => new RegExp(pattern.replace(/:\w+\*/g, '.*')).test(req.nextUrl.pathname))) {
+  if (
+    config.matcher.some((pattern) =>
+      new RegExp(pattern.replace(/:\w+\*/g, ".*")).test(req.nextUrl.pathname)
+    )
+  ) {
     return (authMiddleware as any)(req); // Cast because NextAuthRequest vs NextRequest
   }
 
   // For all other requests (typically public pages not explicitly handled by auth logic for redirection)
   return intlMiddleware(req);
 }
-
 
 // Matcher to specify which routes the middleware should run on.
 // This needs to cover all routes where either i18n or auth logic is needed.
@@ -104,8 +118,8 @@ export const config = {
      * - images (static images if you put them in /public/images)
      * - svgs (static svgs if you put them in /public/svgs)
      */
-    '/((?!api/!auth|_next/static|_next/image|favicon.ico|images/.*|svgs/.*).*)',
+    "/((?!api/!auth|_next/static|_next/image|favicon.ico|images/.*|svgs/.*).*)",
     // Explicitly include /api/auth if not covered by the above negative lookahead
-    '/api/auth/:path*'
+    "/api/auth/:path*",
   ],
 };
