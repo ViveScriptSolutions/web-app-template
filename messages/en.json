@@ -1,0 +1,44 @@
+{
+  "Navbar": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "signIn": "Sign In",
+    "signOut": "Sign Out"
+  },
+  "HomePage": {
+    "welcome": "Welcome to",
+    "description": "{siteName} is a modern Next.js starter template with Auth.js, Prisma, ShadCN UI, and more.",
+    "viewOnGitHub": "View on GitHub",
+    "getStarted": "Get Started",
+    "features": "Features"
+  },
+  "AboutPage": {
+    "title": "About Us",
+    "intro": "This is a starter template designed to kickstart your Next.js projects with all the essential features.",
+    "body": "Built with the latest technologies to ensure a modern, scalable, and maintainable codebase. We focus on developer experience and performance."
+  },
+  "ContactPage": {
+    "title": "Contact Us",
+    "intro": "Have questions or feedback? We'd love to hear from you.",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "sendMessage": "Send Message"
+  },
+  "DashboardPage": {
+    "title": "Dashboard",
+    "welcome": "Welcome to your protected dashboard, {userName}!"
+  },
+  "SignInPage": {
+    "title": "Sign In",
+    "credentialsError": "Invalid email or password.",
+    "genericError": "An unexpected error occurred. Please try again.",
+    "emailLabel": "Email address",
+    "passwordLabel": "Password",
+    "credentialsSubmit": "Sign In with Credentials",
+    "or": "OR",
+    "googleSubmit": "Sign In with Google"
+  }
+}
